@@ -1,0 +1,50 @@
+# =========================
+# Node / dependencies
+# =========================
+node_modules/
+
+# =========================
+# Build outputs
+# =========================
+out/
+dist/
+*.vsix
+
+# =========================
+# Logs
+# =========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
+
+# =========================
+# VS Code extension development
+# =========================
+.vscode-test/
+
+# (optional) ignore local VS Code settings
+# .vscode/
+
+# =========================
+# Dev Containers (optional)
+# =========================
+# If you want to version the container, REMOVE this line
+.devcontainer/.env
+
+# =========================
+# Operating System files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Webview build artifacts (if regenerated during build)
+# =========================
+src/webview/**/*.js
+src/webview/**/*.map

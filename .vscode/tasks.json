@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: install",
+      "type": "shell",
+      "command": "npm install",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: watch",
+      "type": "shell",
+      "command": "npm run watch",
+      "isBackground": true,
+      "problemMatcher": {
+        "base": "$tsc-watch",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Starting compilation",
+          "endsPattern": "Watching for file changes|compiled successfully"
+        }
+      }
+    },
+    {
+      "label": "build vsix",
+      "type": "shell",
+      "command": "vsce package",
+      "problemMatcher": []
+    },
+    {
+      "label": "install vsix (local)",
+      "type": "shell",
+      "command": "code --install-extension ./hl-ps2-gui-1.0.0.vsix",
+      "problemMatcher": []
+    }
+  ]
+}

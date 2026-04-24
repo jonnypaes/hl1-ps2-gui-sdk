@@ -1,0 +1,92 @@
+{
+  "name": "hl-ps2-gui-sdk",
+  "displayName": "Half-Life (PS2) GUI Editor",
+  "description": "Half-Life (PS2) GUI Editor",
+  "version": "0.1.0",
+  "publisher": "jonnypaes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonnypaes/hl1-ps2-gui-sdk.git"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Visualization"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:launcher"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "launcher",
+        "aliases": [
+          "Half-Life (PS2) GUI Editor"
+        ],
+        "filenamePatterns": [
+          "guidef.txt",
+          "**/guidef.txt"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "launcher",
+        "scopeName": "source.launcher",
+        "path": "./syntaxes/launcher.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "hl-ps2-sdk.buildBinary",
+        "title": "HL-PS2: Build Binary GUI SDK",
+        "category": "SDK",
+        "icon": "$(go-to-file)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "hl-ps2-sdk.buildBinary",
+          "group": "navigation",
+          "when": "editorLangId == launcher"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "launcher-explorer",
+          "title": "Half-Life (PS2) GUI SDK",
+          "icon": "media/hl1-ps2.svg"
+        }
+      ]
+    },
+    "views": {
+      "launcher-explorer": [
+        {
+          "id": "launcher.preview",
+          "type": "webview",
+          "name": "Live Preview"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile && npm run build-webview",
+    "compile": "tsc -p ./",
+    "watch": "concurrently \"npm run compile && tsc -w\" \"npm run build-webview -- --watch\"",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "build-webview": "npx esbuild src/webview/main.ts --bundle --outfile=out/webview/main.js --platform=browser --format=iife --target=es2020"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.126",
+    "@types/vscode": "^1.75.0",
+    "esbuild": "^0.28.0",
+    "typescript": "^4.9.5"
+  }
+}
