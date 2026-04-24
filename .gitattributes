@@ -1,0 +1,51 @@
+# =========================
+# Line ending normalization
+# =========================
+* text=auto eol=lf
+
+# Scripts (ensure LF for Node/TypeScript)
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+# Shell scripts (Linux/Mac)
+*.sh text eol=lf
+
+# Windows scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# =========================
+# Binary files
+# =========================
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# =========================
+# Export cleanup (used for git archive only)
+# =========================
+.devcontainer/** export-ignore
+.vscode/** export-ignore
+.github/** export-ignore
+
+# =========================
+# Build output / dependencies
+# =========================
+node_modules/** export-ignore
+out/** export-ignore
+dist/** export-ignore
+*.vsix export-ignore
+
+# =========================
+# TypeScript cache
+# =========================
+*.tsbuildinfo export-ignore
