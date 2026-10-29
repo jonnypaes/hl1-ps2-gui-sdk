@@ -1,0 +1,54 @@
+name: GUIDEF Browser Site
+on:
+  pull_request:
+    paths:
+      - 'src/core/GuidefInspection.ts'
+      - 'site/**'
+      - 'tests/guidef-inspector.test.cjs'
+      - 'tsconfig.site.json'
+      - 'package.json'
+      - '.github/workflows/pages.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/core/GuidefInspection.ts'
+      - 'site/**'
+      - 'tests/guidef-inspector.test.cjs'
+      - 'tsconfig.site.json'
+      - 'package.json'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages-site
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run test:inspector
+      - run: npm run check-site
+      - run: npm run build-site
+      - name: Upload static site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment: github-pages
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

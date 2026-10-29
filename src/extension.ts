@@ -6,6 +6,7 @@ import { LauncherPreviewProvider } from './webview/PreviewProvider';
 import { Scanner } from './core/Scanner';
 import { Parser } from './core/Parser';
 import { BinaryExporter } from './core/BinaryExporter';
+import { inspectGuidef } from './core/GuidefInspection';
 
 export function activate(context: vscode.ExtensionContext) {
     const provider = new LauncherPreviewProvider(context.extensionUri);
@@ -88,6 +89,37 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.workspace.onDidChangeTextDocument(e => updatePreview(e.document)),
         vscode.window.onDidChangeActiveTextEditor(e => e && updatePreview(e.document))
     );
+
+    // The same source-only inspection engine used by the static browser site.
+    // Deliberately independent from legacy preview and binary exporting.
+    const inspectionChannel = vscode.window.createOutputChannel('HL1 PS2 GUIDEF Inspector');
+    context.subscriptions.push(inspectionChannel);
+    context.subscriptions.push(vscode.commands.registerCommand('hl-ps2-sdk.inspectGuidef', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showWarningMessage('Open a guidef.txt to inspect its source.');
+            return;
+        }
+        const result = inspectGuidef(editor.document.getText());
+        inspectionChannel.clear();
+        inspectionChannel.appendLine('GUIDEF source inspection (not verified PS2 runtime behavior)');
+        inspectionChannel.appendLine('File: ' + editor.document.uri.toString());
+        inspectionChannel.appendLine('Lines: ' + result.lines.length + ', blocks: ' + result.blocks.length +
+            ', notes: ' + result.diagnostics.length);
+        for (const block of result.blocks) {
+            inspectionChannel.appendLine('[' + block.id + '] ' + block.type + ' @ ' + block.startLine +
+                (block.endLine !== null ? '..' + block.endLine : '..unclosed') +
+                (block.parentId !== null ? ' parent #' + block.parentId : ''));
+            for (const prop of block.properties) {
+                inspectionChannel.appendLine('  L' + prop.line + ' ' + prop.key + ' ' + prop.value);
+            }
+        }
+        for (const diagnostic of result.diagnostics) {
+            inspectionChannel.appendLine(diagnostic.severity.toUpperCase() + ' L' + diagnostic.line +
+                ' ' + diagnostic.code + ': ' + diagnostic.message);
+        }
+        inspectionChannel.show(true);
+    }));
 
     // 4. Build Command
     const buildCommand = vscode.commands.registerCommand('hl-ps2-sdk.buildBinary', () => {

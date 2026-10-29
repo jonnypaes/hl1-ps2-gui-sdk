@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>HL1 PS2 — GUIDEF Inspector</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="brand">HL1 <span>PS2</span> / GUIDEF INSPECTOR</div>
+    <p>Inspeção estrutural do arquivo, sem execução de código do jogo nem pressupor a semântica do SLUS.</p>
+  </header>
+  <main>
+    <section id="drop" class="dropzone" aria-label="Área para importar arquivo GUIDEF">
+      <h1>Abra seu <code>guidef.txt</code></h1>
+      <p>Selecione um arquivo local ou arraste-o aqui. Nenhum dado é enviado para um servidor.</p>
+      <div class="actions">
+        <label for="file" class="button">Selecionar arquivo</label>
+        <input id="file" type="file" accept=".txt,.guidef,text/plain">
+        <button id="example" type="button" class="secondary">Exemplo sintético</button>
+      </div>
+      <p id="status" role="status">Nenhum arquivo aberto.</p>
+      <p id="summary" class="hint">A visualização usa o texto fornecido pelo usuário. Limite: 8 MiB.</p>
+    </section>
+    <section class="columns">
+      <div class="panel">
+        <h2>Fonte original</h2>
+        <p class="hint">Texto preservado. Clique em uma propriedade, aviso ou retângulo para localizar a linha.</p>
+        <textarea id="source" readonly spellcheck="false" aria-label="Conteúdo do guidef original"></textarea>
+      </div>
+      <div class="panel">
+        <h2>Blocos estruturais</h2>
+        <p class="hint">Reconhecimento lexical de GUI_... e END; valores e propriedades desconhecidas são retidos.</p>
+        <div id="structures" class="scroll"><p class="empty">Importe um arquivo para inspecionar.</p></div>
+      </div>
+    </section>
+    <section class="columns">
+      <div class="panel">
+        <h2>Esquema geométrico</h2>
+        <p class="hint">Apenas SCREEN_RECT numérico. Não é preview fiel do runtime de PS2.</p>
+        <div id="drawing" class="drawing"><p class="empty">Sem retângulos para desenhar.</p></div>
+      </div>
+      <div class="panel">
+        <h2>Notas e diagnósticos</h2>
+        <div id="diagnostics" class="scroll"><p class="empty">Aguardando arquivo.</p></div>
+      </div>
+    </section>
+  </main>
+  <footer>Clean-room: fatos observados separados de hipóteses. Nenhum asset do jogo é distribuído neste site. <a href="https://github.com/jonnypaes/hl1-ps2-gui-sdk">Código e documentação</a></footer>
+</body>
+</html>
