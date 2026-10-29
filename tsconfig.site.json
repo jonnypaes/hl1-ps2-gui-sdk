@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "rootDir": ".",
+    "noEmit": true,
+    "types": []
+  },
+  "include": ["site/**/*.ts", "src/core/GuidefInspection.ts"],
+  "exclude": ["node_modules", "out"]
+}

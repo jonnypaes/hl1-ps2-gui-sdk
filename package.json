@@ -45,12 +45,23 @@
         "title": "HL-PS2: Build Binary GUI SDK",
         "category": "SDK",
         "icon": "$(go-to-file)"
+      },
+      {
+        "command": "hl-ps2-sdk.inspectGuidef",
+        "title": "HL-PS2: Inspect GUIDEF Source",
+        "category": "SDK",
+        "icon": "$(search)"
       }
     ],
     "menus": {
       "editor/title": [
         {
           "command": "hl-ps2-sdk.buildBinary",
+          "group": "navigation",
+          "when": "editorLangId == launcher"
+        },
+        {
+          "command": "hl-ps2-sdk.inspectGuidef",
           "group": "navigation",
           "when": "editorLangId == launcher"
         }
@@ -81,7 +92,10 @@
     "watch": "concurrently \"npm run compile && tsc -w\" \"npm run build-webview -- --watch\"",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "build-webview": "npx esbuild src/webview/main.ts --bundle --outfile=out/webview/main.js --platform=browser --format=iife --target=es2020"
+    "build-webview": "npx esbuild src/webview/main.ts --bundle --outfile=out/webview/main.js --platform=browser --format=iife --target=es2020",
+    "build-site": "esbuild site/app.ts --bundle --outfile=site/app.js --platform=browser --format=iife --target=es2020",
+    "test:inspector": "npm run compile && node --test tests/guidef-inspector.test.cjs",
+    "check-site": "tsc -p tsconfig.site.json"
   },
   "devDependencies": {
     "@types/node": "^16.18.126",
