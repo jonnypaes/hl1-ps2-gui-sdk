@@ -26,6 +26,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,6 +38,16 @@ jobs:
       - run: npm run test:inspector
       - run: npm run check-site
       - run: npm run build-site
+      - name: Keep browser bundle on main for legacy branch-based Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f site/app.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'build(site): record tested GUIDEF browser bundle'
+            git push origin HEAD:main
+          fi
       - name: Upload static site
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
