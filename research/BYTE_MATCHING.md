@@ -79,7 +79,10 @@ hypothesis to match.
 ## Cheap CI / reproducible toolchain
 
 - Always-run host job: standard Python tests and freestanding Clang `wasm32`
-  smoke of the portable *hypothesis*, without game assets or dependencies.
+  **relocatable object** compilation of the portable *hypothesis*, without game
+  assets or a host-installed `wasm-ld` requirement. This is not yet a runnable
+  WebAssembly module. Local compilation with a correctly provisioned `wasm-ld`
+  additionally produced a 418-byte module (still not proof of PS2 equivalence).
 - Opt-in, dispatch-only EE job: uses the **same digest-pinned
   `ps2dev/ps2dev:v2.0.0` container** as ps2-pipeline, cross-compiles
   exactly one function to an ET_REL object and publishes a JSON report.
