@@ -1,0 +1,43 @@
+{
+  "schema": "slus-re-xrefs.v1",
+  "target_sha256": "dabf6af7eb84e649e1bdbf40f00597b662607db8dca88a3715dac5327aedcde6",
+  "source": "SLUS_275(8).00 (user-owned, not distributed)",
+  "string_probes": [
+    {
+      "text": "sv_gravity",
+      "file_offset": "0x002511f0",
+      "va": "0x003501f0",
+      "raw_occurrence": true,
+      "code_xref_pair": {
+        "lui_va": "0x0016d4ec",
+        "lui_bytes": "3500043c",
+        "addiu_va": "0x0016d4f4",
+        "addiu_bytes": "f0018424",
+        "register": "a0",
+        "semantic": "lui a0,0x35; addiu a0,a0,0x01f0 => 0x003501f0"
+      },
+      "ownership": "unknown; string address use verified, function start unknown"
+    },
+    {
+      "text": "sv_gravity",
+      "file_offset": "0x0025d330",
+      "va": "0x0035c330",
+      "raw_occurrence": true,
+      "code_xref_pair": null,
+      "ownership": "unknown"
+    },
+    {
+      "text": "sv_gravity",
+      "file_offset": "0x002907c8",
+      "va": "0x0038f7c8",
+      "raw_occurrence": true,
+      "code_xref_pair": null,
+      "ownership": "unknown"
+    }
+  ],
+  "evidence_limitations": [
+    "Substring occurrences in .rodata are not equivalent to declarations.",
+    "Reference from instructions to literal is not a verified owning function start or an engine/GUI assignment.",
+    "Cannot claim equivalence to PC WON launcher source or engine based only on cv/ar names."
+  ]
+}

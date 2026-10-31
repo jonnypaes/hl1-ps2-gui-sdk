@@ -1,0 +1,59 @@
+{
+  "schema": "slus-re-map.v1",
+  "target": {
+    "filename_hint": "SLUS_275(8).00",
+    "format": "ELF32 little-endian MIPS R5900",
+    "size_bytes": 2781176,
+    "sha256": "dabf6af7eb84e649e1bdbf40f00597b662607db8dca88a3715dac5327aedcde6",
+    "md5": "774eea8ed904b9fb5e8264479f3e879d",
+    "image_load_vaddr": "0x00100000"
+  },
+  "observations": [
+    {
+      "id": "obs-gui-parser-filename",
+      "kind": "rodata_c_string",
+      "address": "0x00337788",
+      "file_offset": "0x00238788",
+      "text": "Launcher/GUIParser.cpp",
+      "xref_instructions": [
+        {
+          "address": "0x00108074",
+          "bytes_hex": "3300053c"
+        },
+        {
+          "address": "0x0010807c",
+          "bytes_hex": "8877a524"
+        }
+      ],
+      "interpretation": "The string address is built at 0x00108074/0x0010807c in the nearby function at 0x00108070. This does not prove the original method/class that owns the independently identified wrapper at 0x00108120.",
+      "status": "observed-reference; interpretation-unverified"
+    }
+  ],
+  "functions": [
+    {
+      "entry": "0x00108120",
+      "end_exclusive": "0x00108144",
+      "file_offset": "0x00009120",
+      "symbol_proposal": "re_00108120_forward_swapped_args",
+      "instruction_bytes_hex": "2d10a000f0ffbd272d28c0000000bf7fba21040c2d3040000000bf7b0800e0031000bd27",
+      "instruction_bytes_sha256": "f437b29f3308af7f67d261d29fd2e47d253d44814e561c0c6013f1850f5274a4",
+      "calls": [
+        {
+          "instruction": "0x00108130",
+          "target": "0x001086e8"
+        }
+      ],
+      "register_behavior": "Under MIPS register-call interpretation: forward a0 unchanged, pass incoming a2 as outgoing a1 and incoming a1 as outgoing a2; a3 is unmodified; return callee v0. The function saves/restores ra and changes/restores sp by 16.",
+      "function_entry_confidence": "high",
+      "register_flow_confidence": "high",
+      "calling_convention_semantics": "provisional",
+      "source_owner": "unknown",
+      "related_observation_ids": [
+        "obs-gui-parser-filename"
+      ],
+      "relationship_status": "adjacent-only; not identity proof",
+      "matches_pc_launcher": false,
+      "provenance": "readelf section mapping, llvm-objdump, and bytes of user-provided original ELF"
+    }
+  ]
+}
