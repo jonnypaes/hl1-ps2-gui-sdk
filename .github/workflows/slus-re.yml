@@ -1,0 +1,75 @@
+name: SLUS RE reproducibility (host-first)
+on:
+  pull_request:
+    paths:
+      - 'research/**'
+      - 'tools/re/**'
+      - '.github/workflows/slus-re.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'research/**'
+      - 'tools/re/**'
+      - '.github/workflows/slus-re.yml'
+  workflow_dispatch:
+    inputs:
+      ps2_compiler_probe:
+        description: 'Opt into PS2 EE container compilation (slow image pull, research only)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  host-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strict ELF parsing, mapping, false-positive and negative tests
+        run: python3 -m unittest discover -s research/tests -v
+      - name: Compile portable source hypothesis to WebAssembly
+        run: |
+          set -eu
+          command -v clang
+          command -v wasm-ld
+          mkdir -p re-out
+          clang --target=wasm32 -ffreestanding -nostdlib -O2 \
+            -Wl,--no-entry -Wl,--export=re_00108120_forward_swapped_args \
+            research/ps2/re_00108120.c -o re-out/hypothesis.wasm
+          python3 -c "from pathlib import Path; assert Path('re-out/hypothesis.wasm').read_bytes()[:4]==b'\x00asm'"
+      - name: Record WASM compile as portability only
+        run: echo 'Portable WASM compilation succeeded. This is NOT PS2 binary equivalence.' >> "$GITHUB_STEP_SUMMARY"
+  ps2-compiler-probe:
+    if: github.event_name == 'workflow_dispatch' && inputs.ps2_compiler_probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: ps2dev/ps2dev:v2.0.0@sha256:7e369990274611d9f145cfe60ac578ded5aad5b6485d0afd67c7bfecce830cef
+      env:
+        PS2DEV: /usr/local/ps2dev
+        PS2SDK: /usr/local/ps2dev/ps2sdk
+        PATH: /usr/local/ps2dev/bin:/usr/local/ps2dev/ee/bin:/usr/local/ps2dev/iop/bin:/usr/local/ps2dev/dvp/bin:/usr/local/ps2dev/ps2sdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile one non-verified function hypothesis (EE R5900 target)
+        run: |
+          set -eu
+          command -v mips64r5900el-ps2-elf-gcc
+          command -v python3
+          mips64r5900el-ps2-elf-gcc -v 2>&1 | tail -n 7
+          mkdir -p re-out
+          mips64r5900el-ps2-elf-gcc -O2 -G0 -c \
+            research/ps2/re_00108120.c -o re-out/re_00108120.o
+          python3 tools/re/compare_function.py \
+            --map research/ps2/seed-map.v1.json \
+            --candidate re-out/re_00108120.o \
+            --output re-out/comparison.json
+          cat re-out/comparison.json
+          echo 'Object report only; success does not mean byte-exact reconstruction.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Save only our compiled object and comparison report
+        uses: actions/upload-artifact@v4
+        with:
+          name: re-ps2-object-probe
+          path: re-out/
+          if-no-files-found: error
+          retention-days: 7
