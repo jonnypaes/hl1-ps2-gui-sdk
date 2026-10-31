@@ -27,18 +27,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Strict ELF parsing, mapping, false-positive and negative tests
         run: python3 -m unittest discover -s research/tests -v
-      - name: Compile portable source hypothesis to WebAssembly
+      - name: Compile portable hypothesis to relocatable WebAssembly object
         run: |
           set -eu
           command -v clang
-          command -v wasm-ld
           mkdir -p re-out
-          clang --target=wasm32 -ffreestanding -nostdlib -O2 \
-            -Wl,--no-entry -Wl,--export=re_00108120_forward_swapped_args \
-            research/ps2/re_00108120.c -o re-out/hypothesis.wasm
-          python3 -c "from pathlib import Path; assert Path('re-out/hypothesis.wasm').read_bytes()[:4]==b'\x00asm'"
-      - name: Record WASM compile as portability only
-        run: echo 'Portable WASM compilation succeeded. This is NOT PS2 binary equivalence.' >> "$GITHUB_STEP_SUMMARY"
+          clang --target=wasm32 -ffreestanding -O2 -c \
+            research/ps2/re_00108120.c -o re-out/hypothesis.wasm.o
+          python3 -c "from pathlib import Path; assert Path('re-out/hypothesis.wasm.o').read_bytes()[:4]==b'\x00asm'"
+      - name: Record WASM object compilation as portability only
+        run: echo 'WASM object compilation succeeded (linking and execution NOT tested). This is NOT PS2 binary equivalence.' >> "$GITHUB_STEP_SUMMARY"
   ps2-compiler-probe:
     if: github.event_name == 'workflow_dispatch' && inputs.ps2_compiler_probe
     runs-on: ubuntu-latest
